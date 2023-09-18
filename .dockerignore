@@ -1,0 +1,17 @@
+# MacOS
+**/.DS_Store
+
+# ESLint configs
+**/.eslintrc.*
+
+# Built ts files
+**/dist/
+
+# Logs
+**/npm-debug.log
+
+# Env files
+**/.env**
+
+# Dependency directories
+**/node_modules/

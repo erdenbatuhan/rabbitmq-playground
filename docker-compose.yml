@@ -1,0 +1,104 @@
+version: "3"
+networks:
+  isolated-rabbit-network:
+services:
+  rabbitmq:
+    container_name: rabbit
+    image: "rabbitmq:management"
+    restart: unless-stopped
+    networks:
+      isolated-rabbit-network:
+    ports:
+      - "5672:5672"  # RabbitMQ AMQP port
+      - "15672:15672"  # RabbitMQ management UI
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USERNAME}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 10s
+      timeout: 10s
+      retries: 3
+
+  producer:
+    container_name: producer
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SRC_DIR: producer
+        PORT: ${PORT}
+    restart: unless-stopped
+    networks:
+      isolated-rabbit-network:
+    ports:
+      - "3000:${PORT}"
+    env_file:
+      - application.properties
+    environment:
+      RABBITMQ_HOST: rabbit
+    healthcheck:
+      test: curl --fail http://localhost:${PORT} || exit 1
+      interval: 3s
+      timeout: 3s
+      retries: 10
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+
+  consumer1:
+    container_name: consumer1
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SRC_DIR: consumer
+        PORT: ${PORT}
+    restart: unless-stopped
+    networks:
+      isolated-rabbit-network:
+    env_file:
+      - application.properties
+    environment:
+      RABBITMQ_HOST: rabbit
+    depends_on:
+      producer:
+        condition: service_healthy
+
+  consumer2:
+    container_name: consumer2
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SRC_DIR: consumer
+        PORT: ${PORT}
+    restart: unless-stopped
+    networks:
+      isolated-rabbit-network:
+    env_file:
+      - application.properties
+    environment:
+      RABBITMQ_HOST: rabbit
+    depends_on:
+      producer:
+        condition: service_healthy
+
+  consumer3:
+    container_name: consumer3
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SRC_DIR: consumer
+        PORT: ${PORT}
+    restart: unless-stopped
+    networks:
+      isolated-rabbit-network:
+    env_file:
+      - application.properties
+    environment:
+      RABBITMQ_HOST: rabbit
+    depends_on:
+      producer:
+        condition: service_healthy
