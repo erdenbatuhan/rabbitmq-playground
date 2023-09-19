@@ -38,7 +38,7 @@ export default class RabbitProducer {
   ): Promise<void> => {
     try {
       console.log(`[${correlationId}] Waiting for the reply message(s) on the queue '${replyQueue}'.`);
-      await this.replyChannel.assertQueue(replyQueue, { autoDelete: true, durable: false });
+      await this.replyChannel.assertQueue(replyQueue, { exclusive: true, autoDelete: true, durable: false });
 
       // Consume messages on the reply queue
       let numMessagesReceived = 0;
@@ -87,7 +87,7 @@ export class RabbitExchangeProducer extends RabbitProducer {
     const instance = new RabbitExchangeProducer();
 
     await instance.setUpChannels();
-    await instance.outgoingChannel.assertExchange(outgoingExchange, exchangeType, { durable: false });
+    await instance.outgoingChannel.assertExchange(outgoingExchange, exchangeType, { durable: true });
 
     return instance;
   }
@@ -124,7 +124,7 @@ export class RabbitQueueProducer extends RabbitProducer {
     const instance = new RabbitQueueProducer();
 
     await instance.setUpChannels();
-    await instance.outgoingChannel.assertQueue(outgoingQueue, { autoDelete: true, durable: false });
+    await instance.outgoingChannel.assertQueue(outgoingQueue, { autoDelete: true, durable: true });
 
     return instance;
   }

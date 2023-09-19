@@ -26,7 +26,7 @@ const setUp = async (): Promise<void> => {
   try {
     // Consume messages on the fanout exchange
     const exchangeConsumer = new RabbitExchangeConsumer();
-    await exchangeConsumer.consumeExchange(EXCHANGE_NAME, cb);
+    await exchangeConsumer.consumeExchange(EXCHANGE_NAME, 'fanout', cb);
 
     // Consume messages on the test queue
     const queueConsumer = new RabbitQueueConsumer();
