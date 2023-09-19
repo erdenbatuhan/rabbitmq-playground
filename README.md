@@ -14,7 +14,7 @@
 To start Docker containers for the application, use the following command:
 
 ```bash
-make start
+make run ARGS=-d # Run the containers in background
 ```
 
 This command also stops any existing containers related to this application before starting new ones.

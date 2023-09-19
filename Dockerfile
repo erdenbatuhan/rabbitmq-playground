@@ -7,7 +7,7 @@ ARG PORT
 
 # Install dependencies for rabbit
 WORKDIR /rabbit
-COPY lib/package*.json .
+COPY rabbit/package*.json .
 RUN npm install
 
 # Install dependencies for app
@@ -16,8 +16,8 @@ COPY ${SRC_DIR}/package*.json .
 RUN npm install
 
 # Bundle app source
-COPY ${SRC_DIR}/** .
-COPY rabbit/** /rabbit
+COPY ${SRC_DIR} .
+COPY rabbit /rabbit
 
 # Run app
 EXPOSE ${PORT}

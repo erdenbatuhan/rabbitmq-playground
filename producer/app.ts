@@ -20,7 +20,7 @@ app.post('/broadcast', async (req, res) => {
   await rabbitProducers.fanoutExchangeProducer.sendExchange(
     EXCHANGE_NAME,
     Buffer.from(message),
-    async (message) => {
+    async (message: string) => {
       console.log(`(CALLBACK - EXCHANGE) Received response: ${message}`);
     },
     { waitForAllCustomers: true }
@@ -35,7 +35,7 @@ app.post('/send', async (req, res) => {
   await rabbitProducers.queueProducer.sendToQueue(
     QUEUE_NAME,
     Buffer.from(message),
-    async (message) => {
+    async (message: string) => {
       console.log(`(CALLBACK - QUEUE) Received response: ${message}`);
     }
   );

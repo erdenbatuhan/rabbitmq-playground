@@ -1,5 +1,6 @@
 include application.properties
 
+DEBUG = "false"
 ENV_FILE = --env-file application.properties
 COMPOSE_FILE = -f docker-compose.yml
 
@@ -7,19 +8,19 @@ COMPOSE_FILE = -f docker-compose.yml
 stop:
 	docker-compose -p $(APP_NAME) down
 
-.PHONY: start
-start: stop
-	docker-compose -p $(APP_NAME) $(ENV_FILE) $(COMPOSE_FILE) up --build
+.PHONY: run
+run: stop
+	docker-compose -p $(APP_NAME) $(ENV_FILE) $(COMPOSE_FILE) up --build $(ARGS)
 
 .PHONY: clean
 clean: stop
 	docker-compose -p $(APP_NAME) ps -aq | xargs docker rm -f
 	docker images -a | awk '/$(APP_NAME)/ { print $$3 }' | xargs docker rmi -f
 
-### ------------------------------------------------------------------------ ###
-###  Caution: Use the following commands carefully!                          ###
-###  This warning emphasizes the need for caution when using the commands.   ###
-### ------------------------------------------------------------------------ ###
+### ----------------------------------------------------------------------- ###
+###  Caution: Use the following commands carefully!                         ###
+###  This warning emphasizes the need for caution when using the commands.  ###
+### ----------------------------------------------------------------------- ###
 
 .PHONY: prune
 prune: stop
