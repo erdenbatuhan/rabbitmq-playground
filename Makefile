@@ -15,3 +15,16 @@ start: stop
 clean: stop
 	docker-compose -p $(APP_NAME) ps -aq | xargs docker rm -f
 	docker images -a | awk '/$(APP_NAME)/ { print $$3 }' | xargs docker rmi -f
+
+### ------------------------------------------------------------------------ ###
+###  Caution: Use the following commands carefully!                          ###
+###  This warning emphasizes the need for caution when using the commands.   ###
+### ------------------------------------------------------------------------ ###
+
+.PHONY: prune
+prune: stop
+	docker system prune
+
+.PHONY: prune_with_volumes
+prune_with_volumes: stop
+	docker system prune -a --volumes
