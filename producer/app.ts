@@ -2,10 +2,8 @@ import express from 'express';
 
 import { RabbitExchangeProducer, RabbitQueueProducer } from '~rabbit/rabbit-producer';
 
-const { PORT, EXCHANGE_NAME } = process.env;
-if (!PORT || !EXCHANGE_NAME) throw new Error('Missing environment variables!');
-
-const TEST_QUEUE = 'test';
+const { PORT, EXCHANGE_NAME, QUEUE_NAME } = process.env;
+if (!PORT || !EXCHANGE_NAME || !QUEUE_NAME) throw new Error('Missing environment variables!');
 
 const app = express();
 app.use(express.json());
@@ -35,7 +33,7 @@ app.post('/send', async (req, res) => {
   const { message } = req.body;
 
   await rabbitProducers.queueProducer.sendToQueue(
-    TEST_QUEUE,
+    QUEUE_NAME,
     Buffer.from(message),
     async (message) => {
       console.log(`(CALLBACK - QUEUE) Received response: ${message}`);
@@ -48,7 +46,7 @@ app.post('/send', async (req, res) => {
 app.listen(PORT, async () => {
   rabbitProducers = {
     fanoutExchangeProducer: await RabbitExchangeProducer.setUp(EXCHANGE_NAME, 'fanout'), // Fanout Exchange
-    queueProducer: await RabbitQueueProducer.setUp(TEST_QUEUE)
+    queueProducer: await RabbitQueueProducer.setUp(QUEUE_NAME)
   }
 
   console.log(`Producer listening at http://localhost:${PORT}`);

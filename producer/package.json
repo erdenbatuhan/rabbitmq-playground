@@ -39,6 +39,7 @@
     "axios": "^1.5.0",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
-    "module-alias": "^2.2.3"
+    "module-alias": "^2.2.3",
+    "rabbitmq-sample-use-case": "github:erdenbatuhan/rabbitmq-sample-use-case#dc96362547cd144e7384cc5cca41c74d9645f210"
   }
 }

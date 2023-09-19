@@ -1,0 +1,4 @@
+.env**
+lib/
+package-lock.json
+tsconfig.json

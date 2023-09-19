@@ -1,9 +1,7 @@
 import { RabbitExchangeConsumer, RabbitQueueConsumer } from '~rabbit/rabbit-consumer';
 
-const { EXCHANGE_NAME } = process.env;
-if (!EXCHANGE_NAME) throw new Error('Missing environment variables!');
-
-const TEST_QUEUE = 'test';
+const { EXCHANGE_NAME, QUEUE_NAME } = process.env;
+if (!EXCHANGE_NAME || !QUEUE_NAME) throw new Error('Missing environment variables!');
 
 let receivedCount = 0;
 
@@ -32,7 +30,7 @@ const setUp = async (): Promise<void> => {
 
     // Consume messages on the test queue
     const queueConsumer = new RabbitQueueConsumer();
-    await queueConsumer.consumeQueue(TEST_QUEUE, cb);
+    await queueConsumer.consumeQueue(QUEUE_NAME, cb);
   } catch (err) {
     console.error(err);
     throw err;
