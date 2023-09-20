@@ -24,7 +24,7 @@ This command also stops any existing containers related to this application befo
 To stop all Docker containers related to this application, use the following command:
 
 ```bash
-make stop
+make start
 ```
 
 ### Clean Up Docker Resources
