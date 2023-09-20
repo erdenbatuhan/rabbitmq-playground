@@ -2,15 +2,15 @@ include application.properties
 
 DEBUG = "false"
 ENV_FILE = --env-file application.properties
-COMPOSE_FILE = -f docker-compose.yml
+COMPOSE_FILE = -f docker compose.yml
 
 .PHONY: stop
 stop:
-	docker-compose -p $(APP_NAME) down
+	docker compose -p $(APP_NAME) down
 
 .PHONY: start
 start: stop
-	docker-compose -p $(APP_NAME) $(ENV_FILE) $(COMPOSE_FILE) up --build $(ARGS)
+	docker compose -p $(APP_NAME) $(ENV_FILE) $(COMPOSE_FILE) up --build $(ARGS)
 
 .PHONY: clean_volumes
 clean_volumes: stop
