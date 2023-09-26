@@ -1,7 +1,5 @@
 ## RabbitMQ Playground
 
-## Running with Docker
-
 ### Start Docker Containers
 
 To start Docker containers for the application, use the following command:
