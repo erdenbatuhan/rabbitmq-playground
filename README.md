@@ -1,12 +1,5 @@
 ## RabbitMQ Playground
 
-## Contents
-
-- [Running with Docker](#running-with-docker)
-    - [Start Docker Containers](#start-docker-containers)
-    - [Stop Docker Containers](#stop-docker-containers)
-    - [Clean Up Docker Resources](#clean-up-docker-resources)
-
 ## Running with Docker
 
 ### Start Docker Containers
