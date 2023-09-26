@@ -1,31 +1,27 @@
 version: "3"
-networks:
-  isolated-rabbit-network:
-volumes:
-  rabbitmq.data-volume: # Data volume for RabbitMQ
 services:
+  # RabbitMQ
   rabbitmq:
-    container_name: rabbit
+    container_name: rabbitmq # Keep this the same with the service name for better compatibility with both Docker Swarm and Compose configurations
     image: "rabbitmq:management"
     restart: unless-stopped
     networks:
-      isolated-rabbit-network:
+      isolated-network-rabbit: # Isolated network for RabbitMQ
     volumes:
-      - rabbitmq.data-volume:/var/lib/rabbitmq # Bind the data volume for RabbitMQ
+      - volume-rabbitmq.data:/var/lib/rabbitmq # Bind the data volume for RabbitMQ
     ports:
-      - "5672:5672"  # RabbitMQ AMQP port
-      - "15672:15672"  # RabbitMQ management UI
+      - "5672:5672" # RabbitMQ
+      - "15672:15672" # RabbitMQ Management Portal
     environment:
-      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USERNAME}
-      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_MANAGEMENT_USERNAME}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_MANAGEMENT_PASSWORD}
     healthcheck:
       test: rabbitmq-diagnostics -q ping
-      interval: 10s
-      timeout: 10s
-      retries: 3
-
+      interval: 5s
+      timeout: 5s
+      retries: 10
+  # Producer
   producer:
-    container_name: producer
     build:
       context: .
       dockerfile: Dockerfile
@@ -34,24 +30,23 @@ services:
         PORT: ${PORT}
     restart: unless-stopped
     networks:
-      isolated-rabbit-network:
+      isolated-network-rabbit: # Isolated network for RabbitMQ
     ports:
-      - "3000:${PORT}"
+      - ${PORT}:${PORT}
     env_file:
       - application.properties
     environment:
-      RABBITMQ_HOST: rabbit
+      RABBITMQ_HOST: rabbitmq # Ensure this matches the service name of the RabbitMQ service
     healthcheck:
       test: curl --fail http://localhost:${PORT} || exit 1
-      interval: 3s
+      interval: 10s
       timeout: 3s
       retries: 10
     depends_on:
       rabbitmq:
         condition: service_healthy
-
-  consumer1:
-    container_name: consumer1
+  # Consumers
+  consumer:
     build:
       context: .
       dockerfile: Dockerfile
@@ -60,49 +55,20 @@ services:
         PORT: ${PORT}
     restart: unless-stopped
     networks:
-      isolated-rabbit-network:
+      isolated-network-rabbit: # Isolated network for RabbitMQ
     env_file:
       - application.properties
     environment:
-      RABBITMQ_HOST: rabbit
+      RABBITMQ_HOST: rabbitmq # Ensure this matches the service name of the RabbitMQ service
     depends_on:
+      rabbitmq:
+        condition: service_healthy
       producer:
         condition: service_healthy
-
-  consumer2:
-    container_name: consumer2
-    build:
-      context: .
-      dockerfile: Dockerfile
-      args:
-        SRC_DIR: consumer
-        PORT: ${PORT}
-    restart: unless-stopped
-    networks:
-      isolated-rabbit-network:
-    env_file:
-      - application.properties
-    environment:
-      RABBITMQ_HOST: rabbit
-    depends_on:
-      producer:
-        condition: service_healthy
-
-  consumer3:
-    container_name: consumer3
-    build:
-      context: .
-      dockerfile: Dockerfile
-      args:
-        SRC_DIR: consumer
-        PORT: ${PORT}
-    restart: unless-stopped
-    networks:
-      isolated-rabbit-network:
-    env_file:
-      - application.properties
-    environment:
-      RABBITMQ_HOST: rabbit
-    depends_on:
-      producer:
-        condition: service_healthy
+    deploy:
+      mode: replicated
+      replicas: 9 # Number of consumers
+networks:
+  isolated-network-rabbit: # Isolated network for RabbitMQ
+volumes:
+  volume-rabbitmq.data: # Data volume for RabbitMQ

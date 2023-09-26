@@ -12,34 +12,26 @@
     "url": "https://github.com/erdenbatuhan/rabbitmq-sample-use-case/issues"
   },
   "homepage": "https://github.com/erdenbatuhan/rabbitmq-sample-use-case#readme",
-  "main": "dist/producer/app.js",
-  "types": "dist/producer/app.d.ts",
-  "files": [
-    "dist",
-    "package.json",
-    "package-lock.json",
-    "README.md"
-  ],
   "_moduleAliases": {
-    "~rabbit": "dist/rabbit/lib"
+    "@rabbitmq": "dist/src/rabbitmq"
   },
   "scripts": {
-    "dev": "node --loader ts-node/esm app.ts",
+    "dev": "node --loader ts-node/esm -r dotenv/config app.ts dotenv_config_path=./.env.local",
     "build": "rm -rf dist && tsc",
-    "serve": "npm run build && node -r module-alias/register dist/producer/app.js",
+    "serve": "npm run build && node -r module-alias/register dist/app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "devDependencies": {
-    "@types/amqplib": "^0.10.1",
-    "@types/express": "^4.17.17",
-    "typescript": "^5.2.2"
   },
   "dependencies": {
     "amqplib": "^0.10.3",
     "axios": "^1.5.0",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
-    "module-alias": "^2.2.3",
-    "rabbitmq-sample-use-case": "github:erdenbatuhan/rabbitmq-sample-use-case#dc96362547cd144e7384cc5cca41c74d9645f210"
+    "module-alias": "^2.2.3"
+  },
+  "devDependencies": {
+    "@types/amqplib": "^0.10.1",
+    "@types/express": "^4.17.17",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.2.2"
   }
 }
