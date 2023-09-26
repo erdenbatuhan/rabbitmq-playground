@@ -1,4 +1,4 @@
-## RabbitMQ Sample Usecase
+## RabbitMQ Playground
 
 ## Contents
 
